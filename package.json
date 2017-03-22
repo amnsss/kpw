@@ -1,0 +1,17 @@
+{
+  "name": "kpw",
+  "version": "1.0.0",
+  "description": "Qunar 密码保持工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "kpw": "./index.js"
+  },
+  "author": "wenjie.zhang",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^2.9.0"
+  }
+}
