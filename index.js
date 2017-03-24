@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-console.log('Hello, world!');
 
 // node changePassword.js exchange-host(如mail.baidu.com) 用户名 密码
 // node changePassword.js mail.corp.qunar.com wenjie.zhang Qunar.987
