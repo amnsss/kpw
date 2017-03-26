@@ -41,7 +41,7 @@ function increaseVerbosity(v, total) {
 
 
 program
-  .version('0.0.1')
+  .version('1.0.0')
   .option('-H, --host [host]', '保持密码不变的站点 host', 'mail.corp.qunar.com')
   // .option('-p, --password <password>', 'The user\'s password')
   // .action(function(file) {
