@@ -4,7 +4,8 @@
   "description": "Qunar 密码保持工具",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "node --nolazy --debug-brk=5858 index.js"
   },
   "bin": {
     "kpw": "./index.js"
@@ -12,8 +13,10 @@
   "author": "wenjie.zhang",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^1.1.3",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "progress": "^1.1.8"
   }
 }

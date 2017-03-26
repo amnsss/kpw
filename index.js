@@ -14,12 +14,13 @@
 var url = require('url');
 var https = require('https');
 var querystring = require('querystring');
-
+var co = require('co');
+var prompt = require('co-prompt');
+var program = require('commander');
+var chalk = require('chalk');
+var ProgressBar = require('progress');
 var cookie = require('./lib/cookieManager');
 var request = require('./lib/requestManager');
-var program = require('commander');
-
-var program = require('commander');
 
 function range(val) {
   return val.split('..').map(Number);
@@ -39,33 +40,41 @@ function increaseVerbosity(v, total) {
 }
 
 
-
-var program = require('commander');
-
 program
   .version('0.0.1')
-  .arguments('<file>')
-  .option('-u, --username <username>', 'The user to authenticate as')
-  .option('-p, --password <password>', 'The user\'s password')
-  .action(function(file) {
-    console.log('user: %s pass: %s file: %s', program.username, program.password, file);
-  })
-  .parse(process.argv)
-  console.log('user: %s pass: %s', program.username, program.password);
-
-
+  .option('-H, --host [host]', '保持密码不变的站点 host', 'mail.corp.qunar.com')
+  // .option('-p, --password <password>', 'The user\'s password')
+  // .action(function(file) {
+  //   console.log('user: %s pass: %s file: %s', program.username, program.password, file);
+  // })
+  .parse(process.argv);
 
 var MAXCOUNT = 5;
 var passwordTemp = [];
-var h = process.argv[2];
+var h = program.host;
 var host = "https://" + h;
-var userName = process.argv[3];
-var targetPassword = process.argv[4];
-
+var userName = '';
+var targetPassword = '';
 var charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // 字母表，用于生成随机密码
 var specialChar = '!@#$';
 var currentPassword = targetPassword;
 var changeCount = 0;
+var barOpts = {
+      width: 20,
+      total: 120,
+      clear: true
+    };
+var bar = new ProgressBar(' doing [:bar] :percent :etas', barOpts);
+
+(function keepPassword() {
+    co(function *() {
+      userName = yield prompt('username: ');
+      targetPassword = yield prompt.password('password: ');
+      currentPassword = targetPassword;
+      // console.log('user: %s pass: %s', userName, targetPassword);
+      login();
+    });
+})()
 
 function createRandomChar() {
   var randomNumber = parseInt(Math.random() * 1000000);
@@ -79,7 +88,7 @@ function getNewPassword() {
   if (~passwordTemp.indexOf(password)) {
     newPassword();
   }
-  console.log('生成新密码：' + password);
+  // console.log('生成新密码：' + password);
   return password;
 }
 
@@ -137,15 +146,17 @@ function changePassword() {
   };
 
   var urlString = host + '/owa/ev.owa?oeh=1&ns=Options&ev=ChangePassword';
-  console.log('密码将被改为：' + newPassword);
+  // console.log('密码将被改为：' + newPassword);
   request.go('POST', urlString, params, headers, function (res, content) {
     if (content === '') {
-      console.log('密码已经被改为：' + newPassword);
+      // console.log('密码已经被改为：' + newPassword);
       changeCount++;
+      bar.tick(20);
       currentPassword = newPassword;
 
       if (changeCount > MAXCOUNT) {
-        console.log('密码已经被改回：' + targetPassword);
+        // console.log('密码已经被改回：' + targetPassword);
+        console.log(chalk.bold.cyan('密码延期成功'));
         process.exit();
       }
       cookie.clear();
@@ -155,4 +166,13 @@ function changePassword() {
     }
   });
 }
+
+process.on('exit', function() {
+  // console.log(123);
+});
+
+process.on('SIGINT', function() {
+  // console.log("Ignored Ctrl-C");
+  process.exit(0);  
+});
 // login();
