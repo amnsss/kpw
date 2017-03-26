@@ -19,15 +19,41 @@ var cookie = require('./lib/cookieManager');
 var request = require('./lib/requestManager');
 var program = require('commander');
 
+var program = require('commander');
+
+function range(val) {
+  return val.split('..').map(Number);
+}
+
+function list(val) {
+  return val.split(',');
+}
+
+function collect(val, memo) {
+  memo.push(val);
+  return memo;
+}
+
+function increaseVerbosity(v, total) {
+  return total + 1;
+}
+
+
+
+var program = require('commander');
+
 program
- .arguments('<file>')
- .option('-u, --username <username>', 'The user to authenticate as')
- .option('-p, --password <password>', 'The user\'s password')
- .action(function(file) {
-   console.log('user: %s pass: %s file: %s',
-       program.username, program.password, file);
- })
- .parse(process.argv);
+  .version('0.0.1')
+  .arguments('<file>')
+  .option('-u, --username <username>', 'The user to authenticate as')
+  .option('-p, --password <password>', 'The user\'s password')
+  .action(function(file) {
+    console.log('user: %s pass: %s file: %s', program.username, program.password, file);
+  })
+  .parse(process.argv)
+  console.log('user: %s pass: %s', program.username, program.password);
+
+
 
 var MAXCOUNT = 5;
 var passwordTemp = [];
